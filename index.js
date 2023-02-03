@@ -32,6 +32,7 @@ const client = new MongoClient(uri, {
 //       return res.status(403).send({ message: "Forbidden access" });
 //     }
 //     req.decoded = decoded;
+
 //     next();
 //   });
 // };
@@ -45,6 +46,7 @@ async function run() {
     const bookings = database.collection("bookings");
     // const reviewsCollection = database.collection("reviews");
     const usersCollection = database.collection("users");
+    const servicesCollection = database.collection("servicesProduct");  
 
     app.post("/signup", async (req, res) => {
       console.log("result");
@@ -59,6 +61,7 @@ async function run() {
       console.log(result);
       res.send(result);
     });
+
 
     app.get("/division", async (req, res) => {
       const query = {};
@@ -79,6 +82,20 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+
+    app.get('/services',async (req,res)=>{
+      const query = {};
+      const options = await servicesCollection.find(query).toArray();
+      res.send(options);
+    })
+
+    app.get('/services/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query= { _id:ObjectId(id)};
+      const carService = await servicesCollection.findOne(query)
+      res.send(carService);
+    })
+
 
     // app.post("/jwt", (req, res) => {
     //   const user = req.body;
