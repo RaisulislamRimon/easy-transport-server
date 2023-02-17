@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@ac-ejywpg7-shard-00-00.xsvxy9i.mongodb.net:27017,ac-ejywpg7-shard-00-01.xsvxy9i.mongodb.net:27017,ac-ejywpg7-shard-00-02.xsvxy9i.mongodb.net:27017/?ssl=true&replicaSet=atlas-b37q9i-shard-0&authSource=admin&retryWrites=true&w=majority`;
+const uri = `mongodb://${process.env.DB_USERNAME1}:${process.env.DB_PASSWORD1}@ac-ejywpg7-shard-00-00.xsvxy9i.mongodb.net:27017,ac-ejywpg7-shard-00-01.xsvxy9i.mongodb.net:27017,ac-ejywpg7-shard-00-02.xsvxy9i.mongodb.net:27017/?ssl=true&replicaSet=atlas-b37q9i-shard-0&authSource=admin&retryWrites=true&w=majority`;
 // const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.xsvxy9i.mongodb.net/?retryWrites=true&w=majority&ssl=true`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -46,7 +46,7 @@ async function run() {
     const bookings = database.collection("bookings");
     // const reviewsCollection = database.collection("reviews");
     const usersCollection = database.collection("users");
-    const servicesCollection = database.collection("servicesProduct");  
+    const servicesCollection = database.collection("servicesProduct");
 
     app.post("/signup", async (req, res) => {
       console.log("result");
@@ -61,7 +61,6 @@ async function run() {
       console.log(result);
       res.send(result);
     });
-
 
     app.get("/division", async (req, res) => {
       const query = {};
@@ -83,19 +82,18 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/services',async (req,res)=>{
+    app.get("/services", async (req, res) => {
       const query = {};
       const options = await servicesCollection.find(query).toArray();
       res.send(options);
-    })
+    });
 
-    app.get('/services/:id',async(req,res)=>{
+    app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
-      const query= { _id:ObjectId(id)};
-      const carService = await servicesCollection.findOne(query)
+      const query = { _id: ObjectId(id) };
+      const carService = await servicesCollection.findOne(query);
       res.send(carService);
-    })
-
+    });
 
     // app.post("/jwt", (req, res) => {
     //   const user = req.body;
