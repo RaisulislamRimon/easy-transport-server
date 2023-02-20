@@ -40,13 +40,14 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const database = client.db("easy-transport");
+    const database1 = client.db("easy-transport-two");
     const transportsCollection = database.collection("transports");
     const divisions = database.collection("divisions");
     const districts = database.collection("districts");
     const bookings = database.collection("bookings");
-    // const reviewsCollection = database.collection("reviews");
+    const reviews = database1.collection("reviews");
     const usersCollection = database.collection("users");
-    const servicesCollection = database.collection("servicesProduct");  
+    const servicesCollection = database.collection("servicesProduct");
 
     app.post("/signup", async (req, res) => {
       console.log("result");
@@ -83,18 +84,31 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/services',async (req,res)=>{
+    app.get('/services', async (req, res) => {
       const query = {};
       const options = await servicesCollection.find(query).toArray();
       res.send(options);
     })
 
-    app.get('/services/:id',async(req,res)=>{
+    app.get('/services/:id', async (req, res) => {
       const id = req.params.id;
-      const query= { _id:ObjectId(id)};
+      const query = { _id: ObjectId(id) };
       const carService = await servicesCollection.findOne(query)
       res.send(carService);
     })
+
+    app.post("/reviews", async (req, res) => {
+      const data = req.body;
+      const result = await reviews.insertOne(data);
+      res.send(result);
+    });
+    app.get('/reviews', async (req, res) => {
+      const query = {};
+      const cursor = reviews.find(query)
+      const allReviews = await cursor.limit(3).toArray()
+      res.send(allReviews);
+    })
+
 
 
     // app.post("/jwt", (req, res) => {
@@ -144,18 +158,23 @@ async function run() {
     //   res.send(service);
     // });
 
-    // // create review
-    // app.post("/add-review", async (req, res) => {
-    //   const review = req.body;
-    //   const result = await reviewsCollection.insertOne(review);
-    //   res.json(result);
-    // });
-
+    // create review
+    // app.get('/reviews', async (req, res) => {
+    //   const query = {};
+    //   const options = await reviews.find(query).toArray();
+    //   res.send(options);
+    // })
     // // read all reviews for this service
     // app.get("/reviews/:_id", async (req, res) => {
     //   const id = req.params._id;
     //   const query = { serviceId: id };
     //   const cursor = reviewsCollection.find(query).sort({ date: -1 });
+    //   const reviews = await cursor.toArray();
+    //   res.send(reviews);
+    // });
+    // app.get("/reviews", async (req, res) => {
+    //   const query = {};
+    //   const cursor = reviewsCollection.find(query);
     //   const reviews = await cursor.toArray();
     //   res.send(reviews);
     // });
